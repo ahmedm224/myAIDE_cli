@@ -42,18 +42,65 @@ See `docs/myaide-feature.md` for myAIDE.md technical details, `docs/myaide-usage
 - Workspace directory containing the project to modify
 
 ## Installation
+
+### Method 1: One-Line Install (Easiest)
+
+**Linux/macOS:**
 ```bash
+curl -fsSL https://raw.githubusercontent.com/ahmedm224/myAIDE_cli/main/install.sh | bash
+```
+
+**Windows PowerShell:**
+```powershell
+iwr -useb https://raw.githubusercontent.com/ahmedm224/myAIDE_cli/main/install.ps1 | iex
+```
+
+This will automatically install Node.js dependencies and set up the global `myaide` command.
+
+### Method 2: Install from GitHub
+```bash
+# Clone the repository
+git clone https://github.com/ahmedm224/myAIDE_cli.git
+cd myAIDE_cli
+
+# Install dependencies and build
 npm install
 npm run build
+
+# Install globally (makes 'myaide' command available everywhere)
+npm install -g .
+
+# Verify installation
+myaide --version
+```
+
+### Method 3: Direct Global Install from GitHub
+```bash
+# Install directly from GitHub without cloning
+npm install -g git+https://github.com/ahmedm224/myAIDE_cli.git
+
+# Verify installation
+myaide --version
+```
+
+### Method 4: Local Development Setup
+```bash
+# Clone and link for development
+git clone https://github.com/ahmedm224/myAIDE_cli.git
+cd myAIDE_cli
+npm install
+npm run build
+npm link
+
+# Now 'myaide' is available globally and linked to your local source
+```
+
+### Uninstall
+```bash
+npm uninstall -g myaide-cli
 ```
 
 The build step compiles TypeScript (`tsc`) and then normalises emitted ESM imports. For local iteration run `npm run dev`, which uses `tsx` to execute `src/cli.ts` directly.
-
-### Optional global command
-```bash
-npm link          # or: npm install -g .
-myaide            # now available anywhere on your machine
-```
 
 ## Configuration & Environment
 myaide-cli loads configuration from (in order): process env vars, workspace `.env`, then CLI flags. Missing variables fall back to interactive prompts.
@@ -67,12 +114,27 @@ myaide-cli loads configuration from (in order): process env vars, workspace `.en
 
 When prompted for the API key, you can choose to persist it to the workspace `.env` for future runs.
 
+## Quick Start
+
+After installation, navigate to your project directory and run:
+
+```bash
+cd /path/to/your/project
+myaide
+```
+
+On first run, myaide will:
+1. Prompt for your OpenAI API key (stored in `.env`)
+2. Ask for workspace permission mode (allow all / prompt per change / dry-run)
+3. Analyze your workspace and generate `myAIDE.md` context file
+4. Show the interactive UI with a prompt box
+
+Type your request (e.g., "Add a login feature with email validation") and press Enter!
+
 ## Running the CLI
 ### Interactive mode (recommended)
-```powershell
-npx myaide           # respects local install
-# or, after linking:
-myaide
+```bash
+myaide           # from any project directory after global install
 ```
 
 Interactive mode launches the Ink UI:
@@ -85,11 +147,29 @@ Interactive mode launches the Ink UI:
 Use `/help` to discover slash commands for filesystem inspection, reading files, printing summaries, managing memory, or compacting the conversation.
 
 ### One-shot execution
-```powershell
-npx myaide "Add linting to the project"
+```bash
+myaide "Add linting to the project"
 ```
 
 This runs the full pipeline once, prints the plan, diffs, and report, then exits.
+
+### Usage Examples
+```bash
+# Add a feature
+myaide "Add user authentication with JWT tokens"
+
+# Fix a bug
+myaide "Fix the memory leak in the WebSocket connection handler"
+
+# Refactor code
+myaide "Refactor the payment processing module to use async/await"
+
+# Add tests
+myaide "Generate unit tests for the UserService class"
+
+# Optimize performance
+myaide "Optimize the database queries in the reporting module"
+```
 
 ### Key CLI flags
 - `-w, --workspace <path>` – Target a specific project directory.

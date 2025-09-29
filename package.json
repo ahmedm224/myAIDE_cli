@@ -17,10 +17,24 @@
     "ai",
     "cli",
     "assistant",
-    "multi-agent"
+    "multi-agent",
+    "coding-assistant",
+    "openai",
+    "gpt",
+    "typescript",
+    "automation",
+    "developer-tools"
   ],
-  "author": "Your Name <you@example.com>",
+  "author": "Ahmed Ali <a.ali_1984@outlook.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahmedm224/myAIDE_cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ahmedm224/myAIDE_cli/issues"
+  },
+  "homepage": "https://github.com/ahmedm224/myAIDE_cli#readme",
   "engines": {
     "node": ">=18"
   },
