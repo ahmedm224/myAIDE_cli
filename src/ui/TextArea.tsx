@@ -27,14 +27,15 @@ export const TextArea: React.FC<TextAreaProps> = ({
   const terminalWidth = process.stdout.columns ?? 80;
   const viewportWidth = useMemo(() => Math.max(20, Math.min(terminalWidth - 10, 120)), [terminalWidth]);
 
+  const normalisedValue = useMemo(() => value.replace(/\r\n?/g, "\n"), [value]);
+
   useEffect(() => {
-    if (cursorPosition > value.length) {
-      setCursorPosition(value.length);
+    if (cursorPosition > normalisedValue.length) {
+      setCursorPosition(normalisedValue.length);
       setPreferredColumn(null);
     }
-  }, [value.length, cursorPosition]);
-
-  const lines = value.split("\n");
+  }, [normalisedValue.length, cursorPosition]);
+  const lines = normalisedValue.split("\n");
   const totalLines = lines.length;
 
   // Determine the cursor's line and column based on the absolute position.
@@ -58,7 +59,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   const visibleLines = lines.slice(startLine, endLine);
 
   const moveCursor = (position: number, preferred?: number | null) => {
-    setCursorPosition(Math.max(0, Math.min(value.length, position)));
+    setCursorPosition(Math.max(0, Math.min(normalisedValue.length, position)));
     setPreferredColumn(preferred ?? null);
   };
 
@@ -70,18 +71,18 @@ export const TextArea: React.FC<TextAreaProps> = ({
       return;
     }
 
-    if (key.return && key.shift) {
-      const before = value.slice(0, cursorPosition);
-      const after = value.slice(cursorPosition);
-      onChange(`${before}\n${after}`);
-      moveCursor(cursorPosition + 1);
-      return;
-    }
+      if (key.return && key.shift) {
+        const before = normalisedValue.slice(0, cursorPosition);
+        const after = normalisedValue.slice(cursorPosition);
+        onChange(`${before}\n${after}`);
+        moveCursor(cursorPosition + 1);
+        return;
+      }
 
     if (key.backspace || key.delete) {
       if (cursorPosition > 0) {
-        const before = value.slice(0, cursorPosition - 1);
-        const after = value.slice(cursorPosition);
+        const before = normalisedValue.slice(0, cursorPosition - 1);
+        const after = normalisedValue.slice(cursorPosition);
         onChange(before + after);
         moveCursor(cursorPosition - 1);
       }
@@ -91,8 +92,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
     if (key.leftArrow) {
       if (key.ctrl || key.meta) {
         let pos = cursorPosition;
-        while (pos > 0 && /\s/.test(value[pos - 1])) pos -= 1;
-        while (pos > 0 && !/\s/.test(value[pos - 1])) pos -= 1;
+        while (pos > 0 && /\s/.test(normalisedValue[pos - 1])) pos -= 1;
+        while (pos > 0 && !/\s/.test(normalisedValue[pos - 1])) pos -= 1;
         moveCursor(pos);
       } else {
         moveCursor(cursorPosition - 1);
@@ -103,8 +104,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
     if (key.rightArrow) {
       if (key.ctrl || key.meta) {
         let pos = cursorPosition;
-        while (pos < value.length && /\s/.test(value[pos])) pos += 1;
-        while (pos < value.length && !/\s/.test(value[pos])) pos += 1;
+        while (pos < normalisedValue.length && /\s/.test(normalisedValue[pos])) pos += 1;
+        while (pos < normalisedValue.length && !/\s/.test(normalisedValue[pos])) pos += 1;
         moveCursor(pos);
       } else {
         moveCursor(cursorPosition + 1);
@@ -139,7 +140,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         newPos += targetColumn;
         moveCursor(newPos, desiredColumn);
       } else {
-        moveCursor(value.length, cursorColumn);
+        moveCursor(normalisedValue.length, cursorColumn);
       }
       return;
     }
@@ -164,10 +165,11 @@ export const TextArea: React.FC<TextAreaProps> = ({
     }
 
     if (input && !key.ctrl && !key.meta && input.length >= 1) {
-      const before = value.slice(0, cursorPosition);
-      const after = value.slice(cursorPosition);
-      onChange(before + input + after);
-      moveCursor(cursorPosition + input.length);
+      const incoming = input.replace(/\r\n?/g, "\n");
+      const before = normalisedValue.slice(0, cursorPosition);
+      const after = normalisedValue.slice(cursorPosition);
+      onChange(before + incoming + after);
+      moveCursor(cursorPosition + incoming.length);
     }
   }, { isActive: !disabled });
 
@@ -211,6 +213,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
     );
   };
 
+  const renderHeight = Math.max(1, Math.min(maxHeight, visibleLines.length || totalLines || 1));
+
   return (
     <Box flexDirection="column" borderStyle="single" borderColor="gray" paddingX={1} paddingY={0}>
       {label && <Text color="white" bold>{label}</Text>}
@@ -221,7 +225,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         </Text>
       )}
 
-      <Box flexDirection="column" minHeight={Math.min(maxHeight, totalLines)}>
+      <Box flexDirection="column" height={renderHeight}>
         {visibleLines.length === 0 || (visibleLines.length === 1 && visibleLines[0] === "") ? (
           <Text color="gray" dimColor>{placeholder}</Text>
         ) : (

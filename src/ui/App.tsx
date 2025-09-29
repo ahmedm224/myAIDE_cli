@@ -317,7 +317,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       onSubmit={handleSubmit}
       placeholder={placeholder}
       disabled={disabled || working}
-      maxHeight={5}
+      maxHeight={Math.min(12, Math.max(3, value.split(/\r?\n/).length))}
       label={label}
     />
   );
@@ -358,7 +358,7 @@ export const App: React.FC<AppProps> = ({ initialRequest }) => {
 
   const handleInputChange = useCallback(
     (value: string) => {
-      dispatch({ type: "set-input", value });
+      dispatch({ type: "set-input", value: value.replace(/\r\n?/g, "\n") });
     },
     [dispatch]
   );
