@@ -1,0 +1,52 @@
+{
+  "name": "myaide-cli",
+  "version": "0.1.0",
+  "description": "Multi-agent AI coding assistant for the terminal (Node/TypeScript)",
+  "bin": {
+    "myaide": "./dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsc --project tsconfig.json && node scripts/fix-imports.js",
+    "prepare": "npm run build",
+    "dev": "tsx src/cli.ts"
+  },
+  "keywords": [
+    "ai",
+    "cli",
+    "assistant",
+    "multi-agent"
+  ],
+  "author": "Your Name <you@example.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.3",
+    "commander": "^12.1.0",
+    "diff": "^8.0.2",
+    "dotenv": "^16.4.5",
+    "ink": "^4.4.1",
+    "ink-text-input": "^5.0.1",
+    "jsonrepair": "^3.5.1",
+    "kleur": "^4.1.5",
+    "openai": "^4.55.1",
+    "react": "^18.3.1",
+    "react-reconciler": "^0.29.0",
+    "scheduler": "^0.23.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/diff": "^5.0.8",
+    "@types/node": "^22.5.2",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "rimraf": "^5.0.7",
+    "tsx": "^4.11.0",
+    "typescript": "^5.5.4"
+  },
+  "type": "module"
+}

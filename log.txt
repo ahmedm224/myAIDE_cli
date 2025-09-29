@@ -1,0 +1,592 @@
+npm run build
+
+> myaide-cli@0.1.0 build
+> tsc --project tsconfig.json
+
+src/agents/agent-base.ts:1:31 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../config/settings.js'?
+
+1 import type { Settings } from "../config/settings";
+                                ~~~~~~~~~~~~~~~~~~~~
+
+src/agents/agent-base.ts:2:35 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../tools/filesystem.js'?
+
+2 import type { FileMutation } from "../tools/filesystem";
+                                    ~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/agent-base.ts:3:37 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../tools/filesystem.js'?
+
+3 import type { FileSystemTool } from "../tools/filesystem";
+                                      ~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/agent-base.ts:4:32 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../tools/shell.js'?
+
+4 import type { ShellTool } from "../tools/shell";
+                                 ~~~~~~~~~~~~~~~~
+
+src/agents/analyzer-agent.ts:1:54 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './agent-base.js'?
+
+1 import { Agent, AgentStatus, type AgentResult } from "./agent-base";
+                                                       ~~~~~~~~~~~~~~
+
+src/agents/analyzer-agent.ts:2:27 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../llm/openai-client.js'?
+
+2 import { LLMClient } from "../llm/openai-client";
+                            ~~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/analyzer-agent.ts:3:37 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../tools/filesystem.js'?
+
+3 import type { FileSystemTool } from "../tools/filesystem";
+                                      ~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/analyzer-agent.ts:18:25 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+18     const fsTool = this.context.filesystem;
+                           ~~~~~~~
+
+src/agents/analyzer-agent.ts:19:33 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+19     const implementation = this.context.artifacts["implementation"] as ImplementationArtifacts | undefined;
+                                   ~~~~~~~
+
+src/agents/analyzer-agent.ts:33:15 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+33     if (!this.context.settings.openAiApiKey) {
+                 ~~~~~~~
+
+src/agents/analyzer-agent.ts:39:41 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+39       const client = new LLMClient(this.context.settings);
+                                           ~~~~~~~
+
+src/agents/analyzer-agent.ts:44:12 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+44       this.context.usage.prompt += completion.usagePromptTokens ?? 0;
+              ~~~~~~~
+
+src/agents/analyzer-agent.ts:45:12 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+45       this.context.usage.completion += completion.usageCompletionTokens ?? 0;
+              ~~~~~~~
+
+src/agents/analyzer-agent.ts:76:30 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+76     const planSection = this.context.plan.length
+                                ~~~~~~~
+
+src/agents/analyzer-agent.ts:77:14 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+77       ? this.context.plan.map((step) => `- ${step}`).join("\n")
+                ~~~~~~~
+
+src/agents/analyzer-agent.ts:77:32 - error TS7006: Parameter 'step' implicitly has an 'any' type.
+
+77       ? this.context.plan.map((step) => `- ${step}`).join("\n")
+                                  ~~~~
+
+src/agents/analyzer-agent.ts:81:25 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+81     const memory = this.context.memory
+                           ~~~~~~~
+
+src/agents/analyzer-agent.ts:83:13 - error TS7006: Parameter 'turn' implicitly has an 'any' type.
+
+83       .map((turn) => `${turn.role === "user" ? "User" : "Assistant"}: ${turn.content}`)
+               ~~~~
+
+src/agents/analyzer-agent.ts:87:29 - error TS2339: Property 'context' does not exist on type 'AnalyzerAgent'.
+
+87       `User request: ${this.context.request}`,
+                               ~~~~~~~
+
+src/agents/implementer-agent.ts:1:54 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './agent-base.js'?
+
+1 import { Agent, AgentStatus, type AgentResult } from "./agent-base";
+                                                       ~~~~~~~~~~~~~~
+
+src/agents/implementer-agent.ts:2:27 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../llm/openai-client.js'?
+
+2 import { LLMClient } from "../llm/openai-client";
+                            ~~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/implementer-agent.ts:3:34 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../llm/openai-client.js'?
+
+3 import type { ChatMessage } from "../llm/openai-client";
+                                   ~~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/implementer-agent.ts:4:51 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../tools/filesystem.js'?
+
+4 import type { FileMutation, FileSystemTool } from "../tools/filesystem";
+                                                    ~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/implementer-agent.ts:5:39 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../context/workspace-summary.js'?
+
+5 import { buildWorkspaceSummary } from "../context/workspace-summary";
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/implementer-agent.ts:76:25 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+76     const fsTool = this.context.filesystem;
+                           ~~~~~~~
+
+src/agents/implementer-agent.ts:80:15 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+80     if (!this.context.plan.length) {
+                 ~~~~~~~
+
+src/agents/implementer-agent.ts:83:15 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+83     if (!this.context.settings.openAiApiKey) {
+                 ~~~~~~~
+
+src/agents/implementer-agent.ts:88:41 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+88       const client = new LLMClient(this.context.settings);
+                                           ~~~~~~~
+
+src/agents/implementer-agent.ts:97:12 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+97       this.context.artifacts["implementation"] = payload;
+              ~~~~~~~
+
+src/agents/implementer-agent.ts:98:12 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+98       this.context.usage.prompt += completion.usagePromptTokens ?? 0;
+              ~~~~~~~
+
+src/agents/implementer-agent.ts:99:12 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+99       this.context.usage.completion += completion.usageCompletionTokens ?? 0;
+              ~~~~~~~
+
+src/agents/implementer-agent.ts:117:27 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+117     const planText = this.context.plan.map((step, idx) => `${idx + 1}. ${step}`).join("\n");
+                              ~~~~~~~
+
+src/agents/implementer-agent.ts:117:45 - error TS7006: Parameter 'step' implicitly has an 'any' type.
+
+117     const planText = this.context.plan.map((step, idx) => `${idx + 1}. ${step}`).join("\n");
+                                                ~~~~
+
+src/agents/implementer-agent.ts:117:51 - error TS7006: Parameter 'idx' implicitly has an 'any' type.
+
+117     const planText = this.context.plan.map((step, idx) => `${idx + 1}. ${step}`).join("\n");
+                                                      ~~~
+
+src/agents/implementer-agent.ts:118:26 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+118     const history = this.context.history
+                             ~~~~~~~
+
+src/agents/implementer-agent.ts:119:13 - error TS7006: Parameter 'result' implicitly has an 'any' type.
+
+119       .map((result) => `${result.agent}: ${result.status} - ${result.summary}`)
+                ~~~~~~
+
+src/agents/implementer-agent.ts:121:25 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+121     const memory = this.context.memory
+                            ~~~~~~~
+
+src/agents/implementer-agent.ts:123:13 - error TS7006: Parameter 'turn' implicitly has an 'any' type.
+
+123       .map((turn) => `${turn.role === "user" ? "User" : "Assistant"}: ${turn.content}`)
+                ~~~~
+
+src/agents/implementer-agent.ts:129:30 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+129       `User request:\n${this.context.request}`,
+                                 ~~~~~~~
+
+src/agents/implementer-agent.ts:177:25 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+177     const fsTool = this.context.filesystem;
+                            ~~~~~~~
+
+src/agents/implementer-agent.ts:181:27 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+181     const decision = this.context.artifacts["decision"] as
+                              ~~~~~~~
+
+src/agents/implementer-agent.ts:197:27 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+197     const codeScan = this.context.artifacts["codeScan"] as
+                              ~~~~~~~
+
+src/agents/implementer-agent.ts:477:21 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+477     if (typeof this.context.artifacts.workspaceSummary === "string") {
+                        ~~~~~~~
+
+src/agents/implementer-agent.ts:478:19 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+478       return this.context.artifacts.workspaceSummary as string;
+                      ~~~~~~~
+
+src/agents/implementer-agent.ts:481:56 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+481       const summary = await buildWorkspaceSummary(this.context.workspace);
+                                                           ~~~~~~~
+
+src/agents/implementer-agent.ts:482:12 - error TS2339: Property 'context' does not exist on type 'ImplementerAgent'.
+
+482       this.context.artifacts.workspaceSummary = summary;
+               ~~~~~~~
+
+src/agents/index.ts:1:15 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './agent-base.js'?
+
+1 export * from "./agent-base";
+                ~~~~~~~~~~~~~~
+
+src/agents/index.ts:2:30 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './planner-agent.js'?
+
+2 export { PlannerAgent } from "./planner-agent";
+                               ~~~~~~~~~~~~~~~~~
+
+src/agents/index.ts:3:34 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './implementer-agent.js'?
+
+3 export { ImplementerAgent } from "./implementer-agent";
+                                   ~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/index.ts:4:31 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './analyzer-agent.js'?
+
+4 export { AnalyzerAgent } from "./analyzer-agent";
+                                ~~~~~~~~~~~~~~~~~~
+
+src/agents/index.ts:5:32 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './validator-agent.js'?
+
+5 export { ValidatorAgent } from "./validator-agent";
+                                 ~~~~~~~~~~~~~~~~~~~
+
+src/agents/index.ts:6:31 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './reporter-agent.js'?
+
+6 export { ReporterAgent } from "./reporter-agent";
+                                ~~~~~~~~~~~~~~~~~~
+
+src/agents/planner-agent.ts:1:54 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './agent-base.js'?
+
+1 import { Agent, AgentStatus, type AgentResult } from "./agent-base";
+                                                       ~~~~~~~~~~~~~~
+
+src/agents/planner-agent.ts:2:27 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../llm/openai-client.js'?
+
+2 import { LLMClient } from "../llm/openai-client";
+                            ~~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/planner-agent.ts:3:34 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../llm/openai-client.js'?
+
+3 import type { ChatMessage } from "../llm/openai-client";
+                                   ~~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/planner-agent.ts:4:39 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../context/workspace-summary.js'?
+
+4 import { buildWorkspaceSummary } from "../context/workspace-summary";
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+src/agents/planner-agent.ts:18:15 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+18     if (!this.context.settings.openAiApiKey) {
+                 ~~~~~~~
+
+src/agents/planner-agent.ts:27:41 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+27       const client = new LLMClient(this.context.settings);
+                                           ~~~~~~~
+
+src/agents/planner-agent.ts:36:27 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+36             `Task: ${this.context.request}`,
+                             ~~~~~~~
+
+src/agents/planner-agent.ts:48:12 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+48       this.context.plan.splice(0, this.context.plan.length, ...plan);
+              ~~~~~~~
+
+src/agents/planner-agent.ts:48:40 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+48       this.context.plan.splice(0, this.context.plan.length, ...plan);
+                                          ~~~~~~~
+
+src/agents/planner-agent.ts:49:12 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+49       this.context.usage.prompt += completion.usagePromptTokens ?? 0;
+              ~~~~~~~
+
+src/agents/planner-agent.ts:50:12 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+50       this.context.usage.completion += completion.usageCompletionTokens ?? 0;
+              ~~~~~~~
+
+src/agents/planner-agent.ts:82:21 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+82     if (typeof this.context.artifacts.workspaceSummary === "string") {
+                       ~~~~~~~
+
+src/agents/planner-agent.ts:83:19 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+83       return this.context.artifacts.workspaceSummary as string;
+                     ~~~~~~~
+
+src/agents/planner-agent.ts:86:56 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+86       const summary = await buildWorkspaceSummary(this.context.workspace);
+                                                          ~~~~~~~
+
+src/agents/planner-agent.ts:87:12 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+87       this.context.artifacts.workspaceSummary = summary;
+              ~~~~~~~
+
+src/agents/planner-agent.ts:95:15 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+95     if (!this.context.memory.length) {
+                 ~~~~~~~
+
+src/agents/planner-agent.ts:98:17 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+98     return this.context.memory
+                   ~~~~~~~
+
+src/agents/planner-agent.ts:100:13 - error TS7006: Parameter 'turn' implicitly has an 'any' type.
+
+100       .map((turn) => `${turn.role === "user" ? "User" : "Assistant"}: ${turn.content}`)
+                ~~~~
+
+src/agents/planner-agent.ts:105:23 - error TS2339: Property 'context' does not exist on type 'PlannerAgent'.
+
+105     const scan = this.context.artifacts["codeScan"] as { summary?: string } | undefined;
+                          ~~~~~~~
+
+src/agents/reporter-agent.ts:1:54 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './agent-base.js'?
+
+1 import { Agent, AgentStatus, type AgentResult } from "./agent-base";
+                                                       ~~~~~~~~~~~~~~
+
+src/agents/reporter-agent.ts:8:15 - error TS2339: Property 'context' does not exist on type 'ReporterAgent'.
+
+8     if (!this.context.history.length) {
+                ~~~~~~~
+
+src/agents/reporter-agent.ts:13:30 - error TS2339: Property 'context' does not exist on type 'ReporterAgent'.
+
+13     for (const entry of this.context.history) {
+                                ~~~~~~~
+
+src/agents/validator-agent.ts:1:54 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './agent-base.js'?
+
+1 import { Agent, AgentStatus, type AgentResult } from "./agent-base";
+                                                       ~~~~~~~~~~~~~~
+
+src/agents/validator-agent.ts:2:32 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../tools/shell.js'?
+
+2 import type { ShellTool } from "../tools/shell";
+                                 ~~~~~~~~~~~~~~~~
+
+src/agents/validator-agent.ts:15:24 - error TS2339: Property 'context' does not exist on type 'ValidatorAgent'.
+
+15     const shell = this.context.shell;
+                          ~~~~~~~
+
+src/agents/validator-agent.ts:44:23 - error TS2339: Property 'context' does not exist on type 'ValidatorAgent'.
+
+44     const hint = this.context.artifacts["validation_hint"];
+                         ~~~~~~~
+
+src/cli.ts:4:21 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './ui/App.js'?
+
+4 import { App } from "./ui/App";
+                      ~~~~~~~~~~
+
+src/cli.ts:6:35 - error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'node20', 'nodenext', or 'preserve'.
+
+6 import pkg from "../package.json" assert { type: "json" };
+                                    ~~~~~~~~~~~~~~~~~~~~~~~
+
+src/decision/engine.ts:1:45 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../llm/openai-client.js'?
+
+1 import { LLMClient, type ChatMessage } from "../llm/openai-client";
+                                              ~~~~~~~~~~~~~~~~~~~~~~
+
+src/decision/engine.ts:2:31 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../config/settings.js'?
+
+2 import type { Settings } from "../config/settings";
+                                ~~~~~~~~~~~~~~~~~~~~
+
+src/decision/engine.ts:3:40 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../context/workspace-summary.js'?
+
+3 import type { WorkspaceSnapshot } from "../context/workspace-summary";
+                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+src/decision/engine.ts:4:51 - error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+
+4 import type { ConversationTurn, TokenUsage } from "../agents";
+                                                    ~~~~~~~~~~~
+
+src/index.ts:7:8 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './orchestrator.js'?
+
+7 } from "./orchestrator";
+         ~~~~~~~~~~~~~~~~
+
+src/index.ts:8:69 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './config/settings.js'?
+
+8 export { loadSettings, type Settings, type SettingsOverrides } from "./config/settings";
+                                                                      ~~~~~~~~~~~~~~~~~~~
+
+src/index.ts:9:15 - error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+
+9 export * from "./agents";
+                ~~~~~~~~~~
+
+src/index.ts:10:15 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './tools/filesystem.js'?
+
+10 export * from "./tools/filesystem";
+                 ~~~~~~~~~~~~~~~~~~~~
+
+src/index.ts:11:15 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './tools/shell.js'?
+
+11 export * from "./tools/shell";
+                 ~~~~~~~~~~~~~~~
+
+src/index.ts:12:15 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './llm/openai-client.js'?
+
+12 export * from "./llm/openai-client";
+                 ~~~~~~~~~~~~~~~~~~~~~
+
+src/index.ts:13:15 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './context/workspace-summary.js'?
+
+13 export * from "./context/workspace-summary";
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+src/index.ts:14:15 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './context/code-scan.js'?
+
+14 export * from "./context/code-scan";
+                 ~~~~~~~~~~~~~~~~~~~~~
+
+src/index.ts:15:15 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './decision/engine.js'?
+
+15 export * from "./decision/engine";
+                 ~~~~~~~~~~~~~~~~~~~
+
+src/llm/openai-client.ts:2:31 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../config/settings.js'?
+
+2 import type { Settings } from "../config/settings";
+                                ~~~~~~~~~~~~~~~~~~~~
+
+src/orchestrator.ts:1:45 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './config/settings.js'?
+
+1 import { loadSettings, type Settings } from "./config/settings";
+                                              ~~~~~~~~~~~~~~~~~~~
+
+src/orchestrator.ts:13:8 - error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+
+13 } from "./agents";
+          ~~~~~~~~~~
+
+src/orchestrator.ts:14:54 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './tools/filesystem.js'?
+
+14 import { FileSystemTool, type MutationConfirm } from "./tools/filesystem";
+                                                        ~~~~~~~~~~~~~~~~~~~~
+
+src/orchestrator.ts:15:27 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './tools/shell.js'?
+
+15 import { ShellTool } from "./tools/shell";
+                             ~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:9:8 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../orchestrator.js'?
+
+9 } from "../orchestrator";
+         ~~~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:10:30 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../config/settings.js'?
+
+10 import { loadSettings } from "../config/settings";
+                                ~~~~~~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:16:8 - error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+
+16 } from "../agents";
+          ~~~~~~~~~~~
+
+src/ui/App.tsx:17:38 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../decision/engine.js'?
+
+17 import type { DecisionOutcome } from "../decision/engine";
+                                        ~~~~~~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:18:38 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../decision/engine.js'?
+
+18 import { AICodeDecisionEngine } from "../decision/engine";
+                                        ~~~~~~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:19:65 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../context/workspace-summary.js'?
+
+19 import { collectWorkspaceSnapshot, buildWorkspaceSummary } from "../context/workspace-summary";
+                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:20:37 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../context/code-scan.js'?
+
+20 import { collectRelevantCode } from "../context/code-scan";
+                                       ~~~~~~~~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:21:35 - error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../tools/filesystem.js'?
+
+21 import type { FileMutation } from "../tools/filesystem";
+                                     ~~~~~~~~~~~~~~~~~~~~~
+
+src/ui/App.tsx:308:48 - error TS7006: Parameter 'res' implicitly has an 'any' type.
+
+308         const reporter = outcome.results.find((res) => res.agent === "reporter");
+                                                   ~~~
+
+src/ui/App.tsx:376:14 - error TS7006: Parameter 'op' implicitly has an 'any' type.
+
+376             (op) => `${op.action.toUpperCase()} ${op.path ?? "(unspecified)"}${op.reason ? ` — ${op.reason}` : ""}`
+                 ~~
+
+src/ui/App.tsx:385:20 - error TS7006: Parameter 'agentName' implicitly has an 'any' type.
+
+385     onAgentStart: (agentName) => {
+                       ~~~~~~~~~
+
+src/ui/App.tsx:388:21 - error TS7006: Parameter 'result' implicitly has an 'any' type.
+
+388     onAgentFinish: (result) => {
+                        ~~~~~~
+
+src/ui/App.tsx:417:42 - error TS7006: Parameter 'res' implicitly has an 'any' type.
+
+417   const reporter = outcome.results.find((res) => res.agent === "reporter");
+                                             ~~~
+
+src/ui/App.tsx:425:8 - error TS7006: Parameter 'res' implicitly has an 'any' type.
+
+425       (res) => res.agent === "validator" && res.status === AgentStatus.Failure
+           ~~~
+
+src/ui/App.tsx:429:57 - error TS7006: Parameter 'res' implicitly has an 'any' type.
+
+429       const appliedMutations = outcome.results.flatMap((res) => res.mutations ?? []).filter((mutation) => mutation.applied);
+                                                            ~~~
+
+src/ui/App.tsx:429:94 - error TS7006: Parameter 'mutation' implicitly has an 'any' type.
+
+429       const appliedMutations = outcome.results.flatMap((res) => res.mutations ?? []).filter((mutation) => mutation.applied);
+                                                                                                 ~~~~~~~~
+
+
+Found 114 errors in 13 files.
+
+Errors  Files
+     4  src/agents/agent-base.ts:1
+    15  src/agents/analyzer-agent.ts:1
+    27  src/agents/implementer-agent.ts:1
+     6  src/agents/index.ts:1
+    19  src/agents/planner-agent.ts:1
+     3  src/agents/reporter-agent.ts:1
+     4  src/agents/validator-agent.ts:1
+     2  src/cli.ts:4
+     4  src/decision/engine.ts:1
+     9  src/index.ts:7
+     1  src/llm/openai-client.ts:2
+     4  src/orchestrator.ts:1
+    16  src/ui/App.tsx:9
