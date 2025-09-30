@@ -4,9 +4,16 @@ import { LLMClient, type ChatMessage } from "../llm/openai-client";
 const SYSTEM_PROMPT = `You are a test generation specialist in a multi-agent coding assistant.
 Your job is to generate comprehensive test cases for newly created or modified code.
 
+CRITICAL: You MUST match the project's actual technology stack and language!
+- If the project uses HTML/CSS/JavaScript, generate JavaScript/Jest tests
+- If the project uses TypeScript, generate TypeScript tests
+- If the project uses Python, generate Python/pytest tests
+- If the project uses React, generate React Testing Library tests
+- NEVER generate TypeScript tests for HTML/JavaScript projects!
+
 RULES:
-1. Analyze the implementation changes and identify what needs testing
-2. Generate test files following the project's testing conventions
+1. Analyze the PROJECT ARCHITECTURE section to identify the tech stack
+2. Generate test files following the project's language and testing conventions
 3. Include unit tests for functions, integration tests for APIs, and component tests for UI
 4. Use existing test patterns from the codebase
 5. Focus on edge cases, error handling, and critical paths
@@ -16,7 +23,7 @@ Response format:
 {
   "tests": [
     {
-      "path": "relative/path/to/test-file.test.ts",
+      "path": "relative/path/to/test-file.test.js",
       "content": "full test file content",
       "framework": "jest|mocha|vitest|etc",
       "coverage": ["function1", "function2"]
@@ -163,6 +170,23 @@ export class TestGeneratorAgent extends Agent {
     }
     if (impl.actions && Array.isArray(impl.actions)) {
       parts.push(`Changes: ${impl.actions.length} action(s)`);
+    }
+
+    // Add actual file content from mutations for better context
+    const mutations = this.context.history.find((r) => r.mutations)?.mutations;
+    if (mutations && mutations.length > 0) {
+      parts.push("\n=== IMPLEMENTED FILES ===");
+      for (const mutation of mutations.slice(0, 3)) {
+        if (mutation.after) {
+          const fileExt = mutation.path.split('.').pop();
+          parts.push(`\nFile: ${mutation.path}`);
+          parts.push(`Language: ${fileExt}`);
+          parts.push("```");
+          parts.push(mutation.after.split("\n").slice(0, 50).join("\n"));
+          parts.push("...");
+          parts.push("```");
+        }
+      }
     }
 
     return parts.join("\n");

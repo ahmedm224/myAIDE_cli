@@ -256,7 +256,11 @@ const InputBox: React.FC<InputBoxProps> = ({
       }
       return;
     }
-    if (key.upArrow) {
+
+    // Disable history navigation when we have multi-line content
+    const isMultiLine = value.includes('\n');
+
+    if (key.upArrow && !isMultiLine) {
       setHistoryIndex((index: number | null) => {
         const lastIndex = history.length - 1;
         if (lastIndex < 0) return index;
@@ -265,7 +269,7 @@ const InputBox: React.FC<InputBoxProps> = ({
         return nextIndex;
       });
     }
-    if (key.downArrow) {
+    if (key.downArrow && !isMultiLine) {
       setHistoryIndex((index: number | null) => {
         if (index === null) {
           onChange("");
@@ -699,6 +703,8 @@ async function runWorkflow(
           ? "✖"
           : "➖";
       append(makeMessage("progress", `${mark} ${result.agent}: ${result.summary}`));
+
+      // Show details for planner
       if (result.agent === "planner" && result.status === AgentStatus.Success && result.details) {
         const steps = extractPlanSteps(result.details);
         if (steps.length) {
@@ -710,8 +716,14 @@ async function runWorkflow(
             )
           );
         }
-      } else if (result.status === AgentStatus.Success && result.agent !== "planner" && result.agent !== "reporter") {
-        // Use explicit completedPlanSteps if provided by agent, otherwise default to 1
+      }
+      // Show details for analyzer, optimizer, test-generator
+      else if (result.details && (result.agent === "analyzer" || result.agent === "optimizer" || result.agent === "test-generator")) {
+        append(makeMessage("system", `\n=== ${result.agent.toUpperCase()} DETAILS ===\n${result.details}`));
+      }
+
+      // Update plan progress
+      if (result.status === AgentStatus.Success && result.agent !== "planner" && result.agent !== "reporter") {
         const stepsCompleted = result.completedPlanSteps ?? 1;
         dispatch({ type: "complete-plan-step", value: stepsCompleted });
       }

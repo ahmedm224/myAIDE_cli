@@ -22,12 +22,26 @@ export const TextArea: React.FC<TextAreaProps> = ({
 }) => {
   const [cursorPosition, setCursorPosition] = useState<number>(value.length);
   const [preferredColumn, setPreferredColumn] = useState<number | null>(null);
+  const [lastValue, setLastValue] = useState<string>(value);
 
   // Track terminal width so we can provide a horizontal viewport for long lines.
   const terminalWidth = process.stdout.columns ?? 80;
-  const viewportWidth = useMemo(() => Math.max(20, Math.min(terminalWidth - 10, 120)), [terminalWidth]);
+  // Allow full width minus minimal padding for borders (4 chars: left border, padding, right border, padding)
+  const viewportWidth = useMemo(() => Math.max(40, terminalWidth - 6), [terminalWidth]);
 
   const normalisedValue = useMemo(() => value.replace(/\r\n?/g, "\n"), [value]);
+
+  // Sync cursor to end when value changes externally (cleared, replaced, etc.)
+  useEffect(() => {
+    const normalisedLast = lastValue.replace(/\r\n?/g, "\n");
+
+    // If value changed externally (not from our own input), reset cursor to end
+    if (normalisedValue !== normalisedLast) {
+      setLastValue(value);
+      setCursorPosition(normalisedValue.length);
+      setPreferredColumn(null);
+    }
+  }, [value, normalisedValue, lastValue]);
 
   useEffect(() => {
     if (cursorPosition > normalisedValue.length) {
@@ -58,9 +72,15 @@ export const TextArea: React.FC<TextAreaProps> = ({
   const endLine = Math.min(totalLines, startLine + maxHeight);
   const visibleLines = lines.slice(startLine, endLine);
 
-  const moveCursor = (position: number, preferred?: number | null) => {
-    setCursorPosition(Math.max(0, Math.min(normalisedValue.length, position)));
+  const moveCursor = (position: number, preferred?: number | null, lengthHint?: number) => {
+    const limit = lengthHint ?? normalisedValue.length;
+    setCursorPosition(Math.max(0, Math.min(limit, position)));
     setPreferredColumn(preferred ?? null);
+  };
+
+  const handleChange = (newValue: string) => {
+    setLastValue(newValue);
+    onChange(newValue);
   };
 
   useInput((input, key) => {
@@ -71,20 +91,32 @@ export const TextArea: React.FC<TextAreaProps> = ({
       return;
     }
 
-      if (key.return && key.shift) {
-        const before = normalisedValue.slice(0, cursorPosition);
-        const after = normalisedValue.slice(cursorPosition);
-        onChange(`${before}\n${after}`);
-        moveCursor(cursorPosition + 1);
-        return;
-      }
+    if (key.return && key.shift) {
+      const before = normalisedValue.slice(0, cursorPosition);
+      const after = normalisedValue.slice(cursorPosition);
+      handleChange(`${before}\n${after}`);
+      moveCursor(cursorPosition + 1, null, normalisedValue.length + 1);
+      return;
+    }
 
-    if (key.backspace || key.delete) {
+    // Backspace: delete character BEFORE cursor
+    if (key.backspace) {
       if (cursorPosition > 0) {
         const before = normalisedValue.slice(0, cursorPosition - 1);
         const after = normalisedValue.slice(cursorPosition);
-        onChange(before + after);
-        moveCursor(cursorPosition - 1);
+        handleChange(before + after);
+        moveCursor(cursorPosition - 1, null, Math.max(0, normalisedValue.length - 1));
+      }
+      return;
+    }
+
+    // Delete: delete character AT/AFTER cursor
+    if (key.delete) {
+      if (cursorPosition < normalisedValue.length) {
+        const before = normalisedValue.slice(0, cursorPosition);
+        const after = normalisedValue.slice(cursorPosition + 1);
+        handleChange(before + after);
+        moveCursor(cursorPosition, preferredColumn, Math.max(0, normalisedValue.length - 1));
       }
       return;
     }
@@ -164,12 +196,40 @@ export const TextArea: React.FC<TextAreaProps> = ({
       return;
     }
 
+    // Ctrl+K: Delete current line
+    if (input === "\x0b") {
+      // Calculate start and end of current line
+      let lineStart = 0;
+      for (let i = 0; i < cursorLine; i += 1) {
+        lineStart += lines[i].length + 1;
+      }
+      const lineEnd = lineStart + lines[cursorLine].length;
+
+      if (totalLines === 1) {
+        // If only one line, clear it
+        handleChange("");
+        moveCursor(0, 0, 0);
+      } else if (cursorLine === totalLines - 1) {
+        // Last line: remove line and preceding newline
+        const before = normalisedValue.slice(0, lineStart - 1);
+        handleChange(before);
+        moveCursor(Math.min(cursorPosition, before.length), preferredColumn, Math.max(0, before.length));
+      } else {
+        // Middle line: remove line and its newline
+        const before = normalisedValue.slice(0, lineStart);
+        const after = normalisedValue.slice(lineEnd + 1);
+        handleChange(before + after);
+        moveCursor(lineStart, preferredColumn, Math.max(0, before.length + after.length));
+      }
+      return;
+    }
+
     if (input && !key.ctrl && !key.meta && input.length >= 1) {
       const incoming = input.replace(/\r\n?/g, "\n");
       const before = normalisedValue.slice(0, cursorPosition);
       const after = normalisedValue.slice(cursorPosition);
-      onChange(before + incoming + after);
-      moveCursor(cursorPosition + incoming.length);
+      handleChange(before + incoming + after);
+      moveCursor(cursorPosition + incoming.length, null, normalisedValue.length + incoming.length);
     }
   }, { isActive: !disabled });
 
@@ -197,16 +257,15 @@ export const TextArea: React.FC<TextAreaProps> = ({
       );
     }
 
-    const relativeCursor = Math.max(0, Math.min(cursorColumn - sliceStart, viewportWidth - 1));
+    const relativeCursor = Math.max(0, Math.min(cursorColumn - sliceStart, slicedLine.length));
     const beforeCursor = slicedLine.substring(0, relativeCursor);
-    const cursorChar = slicedLine[relativeCursor] ?? " ";
-    const afterCursor = relativeCursor + 1 <= slicedLine.length ? slicedLine.substring(relativeCursor + 1) : "";
+    const afterCursor = slicedLine.substring(relativeCursor);
 
     return (
       <Box key={absoluteIndex}>
         {leftIndicator && <Text color="gray">…</Text>}
         <Text>{beforeCursor}</Text>
-        <Text backgroundColor="white" color="black">{cursorChar}</Text>
+        <Text backgroundColor="white" color="black">█</Text>
         <Text>{afterCursor}</Text>
         {rightIndicator && <Text color="gray">…</Text>}
       </Box>
@@ -240,7 +299,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
       )}
 
       <Text color="gray" dimColor>
-        Shift+Enter: newline • Enter: submit • Ctrl+A/E: line start/end
+        Shift+Enter: newline • Enter: submit • Ctrl+A/E: line start/end • Ctrl+K: delete line
       </Text>
     </Box>
   );

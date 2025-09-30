@@ -169,6 +169,21 @@ export class Orchestrator {
         return { generated: false };
       }
 
+      // Check if myAIDE.md is essentially empty or contains only generic content
+      const contentLength = content.trim().length;
+      const hasMinimalContent = contentLength < 200; // Less than 200 chars is likely empty/generic
+      const appearsGeneric = content.includes("No significant files found") ||
+                             content.includes("empty workspace") ||
+                             !content.includes("#"); // No markdown headers
+
+      if (hasMinimalContent || appearsGeneric) {
+        observers?.onMyAIDEStatus?.("myAIDE.md appears empty or generic. Regenerating with current workspace...");
+        const result = await manager.generate();
+        await manager.write(result.content);
+        observers?.onMyAIDEStatus?.(`myAIDE.md regenerated (${result.usage.prompt + result.usage.completion} tokens used).`);
+        return { generated: true, content: result.content };
+      }
+
       observers?.onMyAIDEStatus?.("myAIDE.md found. Checking for significant workspace changes...");
 
       const needsUpdate = await manager.detectNeedsUpdate();
