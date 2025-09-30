@@ -690,6 +690,12 @@ async function runWorkflow(
 
   const orchestrator = new Orchestrator(effectiveSettings, {
     mutationConfirm,
+    iterativeRefinement: {
+      enabled: true,
+      maxIterations: 2,
+      requireValidation: true,
+      requireNoCriticalIssues: true,
+    },
   });
   const observers: OrchestratorObservers = {
     onAgentStart: (agentName) => {

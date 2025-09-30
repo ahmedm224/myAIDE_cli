@@ -24,6 +24,12 @@ export interface OrchestratorConfig {
   validationCommand?: string[];
   agents?: AgentFactory[];
   mutationConfirm?: MutationConfirm;
+  iterativeRefinement?: {
+    enabled: boolean;
+    maxIterations?: number;
+    requireValidation?: boolean;
+    requireNoCriticalIssues?: boolean;
+  };
 }
 
 export interface OrchestratorObservers {
@@ -72,8 +78,15 @@ export class Orchestrator {
     }
 
     const context = this.buildContext(request, memory, artifacts);
-    const results = await this.runOptimizedPipeline(context, observers);
 
+    // Check if iterative refinement is enabled
+    const refinementConfig = this.config.iterativeRefinement;
+    if (refinementConfig?.enabled) {
+      const results = await this.runIterativeRefinement(context, observers, refinementConfig);
+      return { results, usage: context.usage, context, myAIDEGenerated, myAIDEContent };
+    }
+
+    const results = await this.runOptimizedPipeline(context, observers);
     return { results, usage: context.usage, context, myAIDEGenerated, myAIDEContent };
   }
 
@@ -145,6 +158,81 @@ export class Orchestrator {
     observers?.onAgentFinish?.(reportResult);
 
     return results;
+  }
+
+  private async runIterativeRefinement(
+    context: AgentContext,
+    observers?: OrchestratorObservers,
+    config?: { maxIterations?: number; requireValidation?: boolean; requireNoCriticalIssues?: boolean }
+  ): Promise<AgentResult[]> {
+    const maxIterations = config?.maxIterations ?? 3;
+    const requireValidation = config?.requireValidation ?? true;
+    const requireNoCriticalIssues = config?.requireNoCriticalIssues ?? true;
+
+    let allResults: AgentResult[] = [];
+    let iteration = 0;
+    let qualityMet = false;
+
+    observers?.onAgentStart?.("iterative-refinement");
+
+    while (iteration < maxIterations && !qualityMet) {
+      iteration++;
+      observers?.onMyAIDEStatus?.(`\n🔄 Refinement Iteration ${iteration}/${maxIterations}`);
+
+      // Run the full pipeline
+      const iterationResults = await this.runOptimizedPipeline(context, observers);
+      allResults.push(...iterationResults);
+
+      // Check quality criteria
+      const validationResult = iterationResults.find(r => r.agent === "validator");
+      const optimizerResult = iterationResults.find(r => r.agent === "optimizer");
+      const analyzerResult = iterationResults.find(r => r.agent === "analyzer");
+
+      const validationPassed = !requireValidation || validationResult?.status === AgentStatus.Success;
+      const noCriticalIssues = !requireNoCriticalIssues ||
+        (!optimizerResult?.details?.toLowerCase().includes("critical") &&
+         !analyzerResult?.details?.toLowerCase().includes("critical"));
+
+      if (validationPassed && noCriticalIssues) {
+        qualityMet = true;
+        observers?.onMyAIDEStatus?.("✅ Quality standards met!");
+        break;
+      }
+
+      // If not met and we have more iterations, prepare feedback for next iteration
+      if (iteration < maxIterations) {
+        const feedback: string[] = [];
+
+        if (!validationPassed) {
+          feedback.push(`Validation failed: ${validationResult?.summary}`);
+        }
+
+        if (!noCriticalIssues) {
+          if (optimizerResult?.details) {
+            feedback.push(`Optimizer issues:\n${optimizerResult.details}`);
+          }
+          if (analyzerResult?.details) {
+            feedback.push(`Analyzer issues:\n${analyzerResult.details}`);
+          }
+        }
+
+        // Inject feedback into context for next iteration
+        context.artifacts["refinement_feedback"] = feedback.join("\n\n");
+        context.artifacts["refinement_iteration"] = iteration;
+
+        observers?.onMyAIDEStatus?.(`⚠️ Issues detected. Preparing iteration ${iteration + 1}...`);
+
+        // Update the request to include fixing the issues
+        const originalRequest = context.request;
+        context.request = `${originalRequest}\n\n[REFINEMENT FEEDBACK - Iteration ${iteration}]:\n${feedback.join("\n\n")}\n\nPlease address these issues.`;
+      }
+    }
+
+    if (!qualityMet && iteration >= maxIterations) {
+      observers?.onMyAIDEStatus?.(`⚠️ Maximum iterations (${maxIterations}) reached without meeting all quality standards.`);
+    }
+
+    return allResults;
   }
 
   private async handleMyAIDE(observers?: OrchestratorObservers): Promise<{ generated: boolean; content?: string }> {
